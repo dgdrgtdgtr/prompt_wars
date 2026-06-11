@@ -16,16 +16,20 @@ EcoTrace empowers individuals to understand their carbon footprint across four k
 ## 🧠 Approach & Logic
 
 ### Problem
-Most people have no intuitive understanding of their carbon footprint. Abstract statistics ("4.7 tonnes CO₂ per year globally") don't connect to daily decisions.
+Most people have no intuitive understanding of their carbon footprint. Abstract statistics ("4.7 tonnes CO₂ per year globally") don't connect to daily decisions. Existing calculators are either too simplified or too technical, and none provide intelligent, context-aware guidance.
 
 ### Solution
-EcoTrace bridges that gap through three core pillars:
+EcoTrace addresses the full challenge brief across five pillars:
 
-1. **Guided Calculator** — A 4-step, context-aware form that maps real user behaviour (energy bills, driving habits, diet, shopping) to CO₂ emissions using established emission factors (IPCC, DEFRA, Our World in Data).
+1. **Guided Calculator** — A 4-step, context-aware form mapping real behaviour (energy bills, driving habits, diet, shopping) to CO₂ emissions using IPCC / DEFRA / Our World in Data factors. Covers Scope 1 & 2 emissions for home, transport, food, and consumption.
 
-2. **Visual Feedback** — Animated score ring with colour-coded thresholds, breakdown bars by category, and comparison against the global average and Paris Agreement target.
+2. **Visual Feedback** — Animated score ring with colour-coded thresholds (Paris target / global average / high impact), per-category breakdown bars, and direct comparison to international benchmarks.
 
-3. **AI Assistant** — Powered by Claude (claude-sonnet-4-20250514), the assistant provides contextual, personalised advice. It receives the user's calculator results as context, enabling responses like *"Your travel footprint is 3.8t — flights are your single biggest lever. Here's how to address that..."*
+3. **Smart AI Assistant** — Powered by Claude (claude-sonnet-4-20250514). The assistant receives the user's full footprint breakdown as context, enabling specific advice: *"Your travel footprint is 3.8t — your single biggest category. Eliminating one long-haul flight saves 1.6t immediately."* Conversation history is maintained for coherent multi-turn dialogue.
+
+4. **Personalised Reduction Tips** — 16 evidence-based actions, sorted by CO₂ saving (quantified in tonnes/year), filtered by category. After calculation, the top 3 tips are automatically surfaced based on the user's highest-emission categories.
+
+5. **Progress Tracking** — Footprint history stored in `localStorage` (up to 12 entries). A trend badge shows improvement/worsening vs. the user's last calculation, encouraging repeat engagement and behaviour change over time.
 
 ---
 
@@ -176,11 +180,11 @@ node tests/ecotrace.test.js
 
 | Criterion     | Implementation |
 |---------------|----------------|
-| Code Quality  | Modular JS with clear constants, functions, and comments. No global state pollution. |
-| Security      | No stored PII, API keys proxied, user input not injected into DOM. |
-| Efficiency    | Zero dependencies, single HTTP request for fonts, API calls only on demand. |
-| Testing       | Manual test checklist above; input validation; error handling in all async paths. |
-| Accessibility | WCAG 2.1 AA compliance, semantic HTML, keyboard navigation, reduced motion. |
+| Code Quality  | Fully modular ES2022 architecture: `EmissionEngine`, `Utils`, `Calculator`, `ResultsRenderer`, `TipsController`, `ChatController`, `ProgressTracker`. All modules are `Object.freeze()`-d for immutability. JSDoc on every public function. Zero global state. |
+| Security      | `Utils.sanitise()` strips HTML/script tags from all form inputs. `Utils.formatMessage()` HTML-escapes before rendering AI responses (prevents XSS). `Utils.isValidUrl()` blocks `javascript:` and `data:` URIs. All numeric inputs bounded via `Utils.clampNum()`. No PII stored or transmitted. |
+| Efficiency    | Zero runtime dependencies. Service Worker (`sw.js`) caches all static assets for offline use and instant repeat loads. `IntersectionObserver` lazy-reveals sections. `DOMCache` prevents repeated `getElementById` calls. `document.createDocumentFragment()` for batch DOM inserts. Debounced textarea resize. Chat history capped at 20 messages to control token usage. |
+| Testing       | 111 automated tests (no external test runner — pure Node.js). 12 suites covering emission calculations, edge cases, XSS, URL validation, score labels, progress tracking, tip filtering, and benchmarks. `npm test` runs the full suite. |
+| Accessibility | WCAG 2.1 AA. Semantic HTML5 landmarks, `fieldset`/`legend` for form groups, `aria-live` on results and chat, `role="progressbar"` with `aria-valuenow`, `aria-pressed` on filter buttons, all interactive elements keyboard-navigable, `prefers-reduced-motion` respected. |
 
 ---
 
