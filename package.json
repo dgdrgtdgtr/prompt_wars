@@ -1,0 +1,16 @@
+{
+  "name": "ecotrace-carbon-footprint-platform",
+  "version": "1.0.0",
+  "description": "A smart, dynamic carbon footprint awareness platform with AI-powered assistant",
+  "main": "index.html",
+  "scripts": {
+    "test": "node tests/ecotrace.test.js",
+    "start": "npx serve ."
+  },
+  "keywords": ["carbon-footprint", "climate", "sustainability", "ai-assistant"],
+  "author": "EcoTrace",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
