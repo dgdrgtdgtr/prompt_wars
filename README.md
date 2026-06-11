@@ -127,10 +127,39 @@ python -m http.server 8080
 
 ## 🧪 Testing
 
-Manual testing checklist:
-- [x] All 4 calculator steps navigate correctly
-- [x] Progress bar updates accurately
-- [x] Results display with animated ring and bars
+### Automated Test Suite
+
+EcoTrace ships with **77 unit and integration tests** covering all core logic, edge cases, and security scenarios. No external dependencies required.
+
+```bash
+# Run the full test suite
+npm test
+# or directly:
+node tests/ecotrace.test.js
+```
+
+**Test suites:**
+
+| Suite | Tests | Coverage |
+|-------|-------|----------|
+| Emission Factors — data integrity | 6 | Factor ordering, types, values |
+| Home Energy Calculations | 5 | Zero inputs, scaling, source comparison |
+| Travel Calculations | 6 | Flights, driving, EV vs petrol |
+| Food Calculations | 5 | Diet types, local food, waste |
+| Shopping Calculations | 5 | Clothing, electronics, recycling |
+| Total Calculation | 4 | Sum correctness, plausibility |
+| Input Validation & Edge Cases | 7 | NaN, strings, unknown keys, overflow |
+| Security — Sanitisation & XSS | 13 | HTML injection, JS URLs, data: URLs |
+| Score Label Logic | 7 | Boundary conditions, level mapping |
+| Progress Bar Logic | 6 | Step bounds, percentage values |
+| Tips Filtering | 8 | Category filter, required fields |
+| Comparison vs Benchmarks | 5 | Diff sign, boundary values |
+
+### Manual Testing Checklist
+
+- [x] All 4 calculator steps navigate correctly (next/prev)
+- [x] Progress bar updates accurately per step
+- [x] Results display with animated ring and breakdown bars
 - [x] Paris Agreement and global average comparisons show correct sign
 - [x] Reset returns to step 1 with cleared form
 - [x] Tips filter buttons work for all 4 categories
@@ -138,6 +167,8 @@ Manual testing checklist:
 - [x] Keyboard navigation (Tab, Enter, Shift+Enter in textarea)
 - [x] Responsive layout on mobile (< 600px)
 - [x] Reduced motion mode disables all animations
+- [x] XSS attempts in chat input are escaped safely
+- [x] Extremely large/negative numeric inputs don't cause errors
 
 ---
 
