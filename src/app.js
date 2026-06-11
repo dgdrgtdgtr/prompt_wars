@@ -121,8 +121,13 @@ function updateProgress(step) {
 /* ─── Emission calculations ──────────────────────────────────── */
 
 function calculateFootprint() {
-  const get = id => document.getElementById(id)?.value ?? '';
-  const getNum = id => parseFloat(get(id)) || 0;
+  const get = id => sanitiseInput(document.getElementById(id)?.value ?? '');
+  // Safe numeric: clamp to [min, max], treat NaN/negative as min
+  const getNum = (id, min = 0, max = Infinity) => {
+    const n = parseFloat(get(id));
+    if (isNaN(n) || n < min) return min;
+    return Math.min(n, max);
+  };
   const getRadio = name => {
     const el = document.querySelector(`[name="${name}"]:checked`);
     return el ? el.value : null;
@@ -130,7 +135,7 @@ function calculateFootprint() {
 
   // HOME
   const energySrc   = get('energy_source') || 'mixed';
-  const monthlyBill = getNum('monthly_bill');
+  const monthlyBill = getNum('monthly_bill', 0, 100000);
   const heatingType = get('heating') || 'none';
 
   // Estimate kWh from bill (India avg ₹8/kWh approx)
@@ -142,9 +147,9 @@ function calculateFootprint() {
 
   // TRAVEL
   const carType  = get('car_type') || 'none';
-  const kmWeek   = getNum('km_per_week');
-  const fShort   = getNum('flights_short');
-  const fLong    = getNum('flights_long');
+  const kmWeek   = getNum('km_per_week', 0, 10000);
+  const fShort   = getNum('flights_short', 0, 365);
+  const fLong    = getNum('flights_long', 0, 365);
 
   const carEmissions  = kmWeek * 52 * (EMISSION_FACTORS.car[carType] || 0) / 1000; // tonnes
   const flightEmit    = (fShort * EMISSION_FACTORS.flightShort) + (fLong * EMISSION_FACTORS.flightLong);
@@ -153,7 +158,7 @@ function calculateFootprint() {
 
   // FOOD
   const dietType  = getRadio('diet_type') || 'omnivore';
-  const localPct  = getNum('local_food') / 100;
+  const localPct  = getNum('local_food', 0, 100) / 100;
   const foodWaste = get('food_waste') || 'medium';
 
   const dietBase     = EMISSION_FACTORS.diet[dietType] || 2.5;
@@ -163,9 +168,9 @@ function calculateFootprint() {
   const food = +Math.max(0, dietBase + localBonus + wasteAdj).toFixed(2);
 
   // SHOPPING
-  const clothes    = getNum('new_clothes');
-  const electronics= getNum('electronics');
-  const streaming  = getNum('streaming');
+  const clothes    = getNum('new_clothes', 0, 10000);
+  const electronics= getNum('electronics', 0, 1000);
+  const streaming  = getNum('streaming', 0, 24);
   const recycling  = get('recycling') || 'most';
 
   const recyclingBonus = { none: 0, some: -0.05, most: -0.15, all: -0.25 };
@@ -358,9 +363,51 @@ function appendMessage(role, content) {
   return div;
 }
 
+/**
+ * Sanitise arbitrary string input — strips HTML/script tags.
+ * @param {*} value
+ * @returns {*} sanitised value (non-strings returned as-is)
+ */
+function sanitiseInput(value) {
+  if (typeof value !== 'string') return value;
+  return value
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<[^>]+>/g, '')
+    .trim();
+}
+
+/**
+ * Validate that a URL is safe (only http/https protocols).
+ * Prevents javascript: and data: URL injection.
+ * @param {string} url
+ * @returns {boolean}
+ */
+function isValidUrl(url) {
+  try {
+    const u = new URL(url);
+    return ['https:', 'http:'].includes(u.protocol);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Format AI message safely — escapes HTML first, then applies
+ * markdown-style bold and line-break conversion.
+ * Prevents XSS from any AI-generated or user-supplied content.
+ * @param {string} text
+ * @returns {string} safe HTML string
+ */
 function formatMessage(text) {
-  // Convert **bold** and line breaks
-  return text
+  if (typeof text !== 'string') return '';
+  // 1. Escape all HTML entities first
+  const escaped = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+  // 2. Apply safe markdown transforms on escaped text
+  return escaped
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\n/g, '<br>');
 }
