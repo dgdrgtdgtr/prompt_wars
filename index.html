@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="EcoTrace — Calculate your annual carbon footprint across home, travel, food and shopping. Get AI-powered personalised tips to reduce your CO₂ emissions and track progress over time." />
+  <meta name="theme-color" content="#0D2818" />
   <title>EcoTrace — Know Your Carbon Footprint</title>
   <link rel="stylesheet" href="src/styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -308,8 +310,14 @@
             <div class="compare-card__diff" id="parisDiff"></div>
           </div>
         </div>
+        <!-- Trend badge (shown if user has prior results) -->
+        <div id="trendBadge" class="trend-badge" hidden aria-live="polite"></div>
+
+        <!-- Top 3 personalised tips injected by ResultsRenderer -->
+        <div id="resultsTopTips" class="results__top-tips" aria-label="Your top recommended actions"></div>
+
         <button class="btn btn--primary" style="margin-top:2rem" onclick="document.getElementById('tips').scrollIntoView({behavior:'smooth'})">
-          See my personalised reduction tips →
+          See all reduction tips →
         </button>
         <button class="btn btn--ghost" style="margin-top:1rem" onclick="resetCalc()">
           Recalculate
@@ -431,5 +439,29 @@
   </footer>
 
   <script src="src/app.js"></script>
+  <script>
+    // Register Service Worker for offline support and faster repeat loads
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {/* SW unavailable on file:// */});
+      });
+    }
+
+    // Lazy-load off-screen sections using IntersectionObserver
+    if ('IntersectionObserver' in window) {
+      const lazyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(({ isIntersecting, target }) => {
+          if (isIntersecting) {
+            target.classList.add('section--visible');
+            lazyObserver.unobserve(target);
+          }
+        });
+      }, { rootMargin: '100px' });
+      document.querySelectorAll('.section, .insights, .tips, .assistant').forEach(el => {
+        el.classList.add('section--lazy');
+        lazyObserver.observe(el);
+      });
+    }
+  </script>
 </body>
 </html>
