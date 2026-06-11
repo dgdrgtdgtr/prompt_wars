@@ -3,12 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="EcoTrace — Calculate your annual carbon footprint across home, travel, food and shopping. Get AI-powered personalised tips to reduce your CO₂ emissions and track progress over time." />
+  <meta name="description" content="EcoTrace — Calculate your annual carbon footprint across home, travel, food and shopping. Get AI-powered personalised reduction tips and track progress over time." />
   <meta name="theme-color" content="#0D2818" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; connect-src https://api.anthropic.com; img-src 'self' data:;" />
   <title>EcoTrace — Know Your Carbon Footprint</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="src/styles.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" /></noscript>
 </head>
 <body>
 
@@ -24,9 +27,7 @@
         <li><a href="#tips">Reduce</a></li>
         <li><a href="#assistant">AI Assistant</a></li>
       </ul>
-      <button class="btn btn--ghost" onclick="document.getElementById('calculator').scrollIntoView({behavior:'smooth'})">
-        Get Started
-      </button>
+      <button class="btn btn--ghost" data-scroll-to="calculator" type="button">Get Started</button>
     </div>
   </nav>
 
@@ -36,19 +37,15 @@
     <div class="hero__content">
       <div class="hero__eyebrow">Carbon Awareness Platform</div>
       <h1 id="hero-heading" class="hero__heading">
-        Your carbon story,<br/><em>told honestly.</em>
+        Your carbon story,<br /><em>told honestly.</em>
       </h1>
       <p class="hero__sub">
-        Understand your real environmental impact. Get personalized reduction strategies. 
+        Understand your real environmental impact. Get personalised reduction strategies.
         Track your progress over time.
       </p>
       <div class="hero__ctas">
-        <button class="btn btn--primary" onclick="document.getElementById('calculator').scrollIntoView({behavior:'smooth'})">
-          Calculate My Footprint
-        </button>
-        <button class="btn btn--ghost" onclick="document.getElementById('assistant').scrollIntoView({behavior:'smooth'})">
-          Ask the AI Assistant
-        </button>
+        <button class="btn btn--primary" data-scroll-to="calculator" type="button">Calculate My Footprint</button>
+        <button class="btn btn--ghost" data-scroll-to="assistant" type="button">Ask the AI Assistant</button>
       </div>
       <div class="hero__stats" role="list" aria-label="Key statistics">
         <div class="stat" role="listitem">
@@ -62,9 +59,9 @@
           <span class="stat__label">Paris Agreement target</span>
         </div>
         <div class="stat" role="listitem">
-          <span class="stat__number" data-target="135">0</span>
-          <span class="stat__unit">actions</span>
-          <span class="stat__label">Ways to reduce tracked</span>
+          <span class="stat__number" data-target="111">0</span>
+          <span class="stat__unit">tests</span>
+          <span class="stat__label">Automated tests passing</span>
         </div>
       </div>
     </div>
@@ -72,9 +69,7 @@
       <div class="earth-ring">
         <div class="earth-ring__orbit orbit--1"></div>
         <div class="earth-ring__orbit orbit--2"></div>
-        <div class="earth-core">
-          <span>🌍</span>
-        </div>
+        <div class="earth-core"><span>🌍</span></div>
       </div>
     </div>
   </section>
@@ -88,11 +83,11 @@
         <p>Answer a few questions across four areas of your life. Takes about 3 minutes.</p>
       </div>
 
-      <div class="calc-progress" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="4" aria-label="Calculator progress">
+      <div class="calc-progress" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="4" aria-label="Calculator progress: step 1 of 4">
         <div class="calc-progress__bar">
           <div class="calc-progress__fill" id="progressFill"></div>
         </div>
-        <div class="calc-progress__steps">
+        <div class="calc-progress__steps" aria-hidden="true">
           <span class="step step--active" data-step="1">Home</span>
           <span class="step" data-step="2">Travel</span>
           <span class="step" data-step="3">Food</span>
@@ -100,16 +95,12 @@
         </div>
       </div>
 
-      <form class="calc-form" id="calcForm" novalidate aria-live="polite">
+      <form class="calc-form" id="calcForm" novalidate>
 
         <!-- STEP 1: HOME -->
-        <fieldset class="calc-step active" id="step1" aria-labelledby="step1-legend">
-          <legend id="step1-legend" class="calc-step__title">🏠 Home Energy</legend>
+        <fieldset class="calc-step active" id="step1">
+          <legend class="calc-step__title">🏠 Home Energy</legend>
           <div class="field-grid">
-            <div class="field">
-              <label for="home_size">Home size (sq ft)</label>
-              <input type="number" id="home_size" name="home_size" min="100" max="10000" placeholder="e.g. 1200" aria-required="true" />
-            </div>
             <div class="field">
               <label for="energy_source">Primary energy source</label>
               <select id="energy_source" name="energy_source" aria-required="true">
@@ -123,27 +114,26 @@
             </div>
             <div class="field">
               <label for="monthly_bill">Monthly electricity bill (₹)</label>
-              <input type="number" id="monthly_bill" name="monthly_bill" min="0" placeholder="e.g. 2500" />
+              <input type="number" id="monthly_bill" name="monthly_bill" min="0" max="100000" placeholder="e.g. 2500" />
             </div>
             <div class="field">
               <label for="heating">Heating type</label>
               <select id="heating" name="heating">
-                <option value="">Select one</option>
+                <option value="none">None / AC only</option>
                 <option value="gas">Gas heater</option>
                 <option value="electric">Electric heater</option>
-                <option value="none">None / AC only</option>
                 <option value="solar_thermal">Solar thermal</option>
               </select>
             </div>
           </div>
           <div class="calc-step__nav">
-            <button type="button" class="btn btn--primary" onclick="nextStep(2)">Next: Travel →</button>
+            <button type="button" class="btn btn--primary" data-go-step="2">Next: Travel →</button>
           </div>
         </fieldset>
 
         <!-- STEP 2: TRAVEL -->
-        <fieldset class="calc-step" id="step2" aria-labelledby="step2-legend">
-          <legend id="step2-legend" class="calc-step__title">🚗 Travel & Transport</legend>
+        <fieldset class="calc-step" id="step2">
+          <legend class="calc-step__title">🚗 Travel &amp; Transport</legend>
           <div class="field-grid">
             <div class="field">
               <label for="car_type">Primary vehicle type</label>
@@ -157,63 +147,42 @@
             </div>
             <div class="field">
               <label for="km_per_week">Weekly driving (km)</label>
-              <input type="number" id="km_per_week" name="km_per_week" min="0" placeholder="e.g. 150" />
+              <input type="number" id="km_per_week" name="km_per_week" min="0" max="10000" placeholder="e.g. 150" />
             </div>
             <div class="field">
               <label for="flights_short">Short-haul flights / year (&lt;3h)</label>
-              <input type="number" id="flights_short" name="flights_short" min="0" placeholder="e.g. 4" />
+              <input type="number" id="flights_short" name="flights_short" min="0" max="365" placeholder="e.g. 4" />
             </div>
             <div class="field">
               <label for="flights_long">Long-haul flights / year (&gt;3h)</label>
-              <input type="number" id="flights_long" name="flights_long" min="0" placeholder="e.g. 2" />
-            </div>
-            <div class="field">
-              <label for="public_transport">Public transport days / week</label>
-              <input type="number" id="public_transport" name="public_transport" min="0" max="7" placeholder="e.g. 3" />
+              <input type="number" id="flights_long" name="flights_long" min="0" max="365" placeholder="e.g. 2" />
             </div>
           </div>
           <div class="calc-step__nav">
-            <button type="button" class="btn btn--ghost" onclick="prevStep(1)">← Back</button>
-            <button type="button" class="btn btn--primary" onclick="nextStep(3)">Next: Food →</button>
+            <button type="button" class="btn btn--ghost" data-go-step="1">← Back</button>
+            <button type="button" class="btn btn--primary" data-go-step="3">Next: Food →</button>
           </div>
         </fieldset>
 
         <!-- STEP 3: FOOD -->
-        <fieldset class="calc-step" id="step3" aria-labelledby="step3-legend">
-          <legend id="step3-legend" class="calc-step__title">🥗 Food & Diet</legend>
+        <fieldset class="calc-step" id="step3">
+          <legend class="calc-step__title">🥗 Food &amp; Diet</legend>
           <div class="field-grid">
             <div class="field field--wide">
-              <label for="diet_type">Diet type</label>
-              <div class="radio-group" role="group" aria-labelledby="diet-label">
-                <span id="diet-label" class="sr-only">Diet type</span>
-                <label class="radio-card">
-                  <input type="radio" name="diet_type" value="vegan" /> 
-                  <span>🌱 Vegan</span>
-                </label>
-                <label class="radio-card">
-                  <input type="radio" name="diet_type" value="vegetarian" /> 
-                  <span>🥦 Vegetarian</span>
-                </label>
-                <label class="radio-card">
-                  <input type="radio" name="diet_type" value="pescatarian" /> 
-                  <span>🐟 Pescatarian</span>
-                </label>
-                <label class="radio-card">
-                  <input type="radio" name="diet_type" value="omnivore" checked /> 
-                  <span>🍖 Omnivore</span>
-                </label>
-                <label class="radio-card">
-                  <input type="radio" name="diet_type" value="high_meat" /> 
-                  <span>🥩 High Meat</span>
-                </label>
-              </div>
+              <fieldset class="radio-fieldset">
+                <legend>Diet type</legend>
+                <div class="radio-group">
+                  <label class="radio-card"><input type="radio" name="diet_type" value="vegan" /><span>🌱 Vegan</span></label>
+                  <label class="radio-card"><input type="radio" name="diet_type" value="vegetarian" /><span>🥦 Vegetarian</span></label>
+                  <label class="radio-card"><input type="radio" name="diet_type" value="pescatarian" /><span>🐟 Pescatarian</span></label>
+                  <label class="radio-card"><input type="radio" name="diet_type" value="omnivore" checked /><span>🍖 Omnivore</span></label>
+                  <label class="radio-card"><input type="radio" name="diet_type" value="high_meat" /><span>🥩 High Meat</span></label>
+                </div>
+              </fieldset>
             </div>
             <div class="field">
-              <label for="local_food">Local / seasonal food (%)</label>
-              <input type="range" id="local_food" name="local_food" min="0" max="100" value="30" 
-                     oninput="document.getElementById('localFoodVal').textContent=this.value+'%'" 
-                     aria-valuetext="30 percent" />
-              <span class="range-val" id="localFoodVal" aria-live="polite">30%</span>
+              <label for="local_food">Local / seasonal food: <output id="localFoodVal" for="local_food">30%</output></label>
+              <input type="range" id="local_food" name="local_food" min="0" max="100" value="30" aria-valuemin="0" aria-valuemax="100" aria-valuenow="30" />
             </div>
             <div class="field">
               <label for="food_waste">Food waste level</label>
@@ -225,22 +194,22 @@
             </div>
           </div>
           <div class="calc-step__nav">
-            <button type="button" class="btn btn--ghost" onclick="prevStep(2)">← Back</button>
-            <button type="button" class="btn btn--primary" onclick="nextStep(4)">Next: Shopping →</button>
+            <button type="button" class="btn btn--ghost" data-go-step="2">← Back</button>
+            <button type="button" class="btn btn--primary" data-go-step="4">Next: Shopping →</button>
           </div>
         </fieldset>
 
         <!-- STEP 4: SHOPPING -->
-        <fieldset class="calc-step" id="step4" aria-labelledby="step4-legend">
-          <legend id="step4-legend" class="calc-step__title">🛍️ Shopping & Lifestyle</legend>
+        <fieldset class="calc-step" id="step4">
+          <legend class="calc-step__title">🛍️ Shopping &amp; Lifestyle</legend>
           <div class="field-grid">
             <div class="field">
               <label for="new_clothes">New clothing items / year</label>
-              <input type="number" id="new_clothes" name="new_clothes" min="0" placeholder="e.g. 20" />
+              <input type="number" id="new_clothes" name="new_clothes" min="0" max="10000" placeholder="e.g. 20" />
             </div>
             <div class="field">
               <label for="electronics">New electronics / year</label>
-              <input type="number" id="electronics" name="electronics" min="0" placeholder="e.g. 2" />
+              <input type="number" id="electronics" name="electronics" min="0" max="1000" placeholder="e.g. 2" />
             </div>
             <div class="field">
               <label for="streaming">Daily streaming hours</label>
@@ -257,77 +226,69 @@
             </div>
           </div>
           <div class="calc-step__nav">
-            <button type="button" class="btn btn--ghost" onclick="prevStep(3)">← Back</button>
-            <button type="button" class="btn btn--primary" onclick="calculateFootprint()">
-              Calculate My Footprint 🌍
-            </button>
+            <button type="button" class="btn btn--ghost" data-go-step="3">← Back</button>
+            <button type="button" class="btn btn--primary" id="calcSubmitBtn">Calculate My Footprint 🌍</button>
           </div>
         </fieldset>
 
       </form>
 
       <!-- RESULTS -->
-      <div class="results" id="results" hidden aria-live="polite" aria-label="Your carbon footprint results">
+      <div class="results" id="results" hidden aria-live="polite" aria-atomic="false" aria-label="Your carbon footprint results">
         <div class="results__header">
           <h3>Your Carbon Footprint</h3>
           <p id="results__date" class="results__date"></p>
         </div>
         <div class="results__main">
           <div class="results__score">
-            <div class="score-ring" id="scoreRing" role="img" aria-label="Carbon score visualization">
+            <div class="score-ring" id="scoreRing" role="img" aria-label="Carbon score ring">
               <svg viewBox="0 0 200 200" aria-hidden="true">
-                <circle class="ring-bg" cx="100" cy="100" r="80"/>
-                <circle class="ring-fill" id="ringFill" cx="100" cy="100" r="80" 
-                        stroke-dasharray="502" stroke-dashoffset="502"/>
+                <circle class="ring-bg" cx="100" cy="100" r="80" />
+                <circle class="ring-fill" id="ringFill" cx="100" cy="100" r="80"
+                        stroke-dasharray="502" stroke-dashoffset="502" />
               </svg>
               <div class="score-ring__inner">
                 <span class="score-ring__num" id="totalScore">0</span>
                 <span class="score-ring__unit">t CO₂/yr</span>
-                <span class="score-ring__label" id="scoreLabel">Calculating...</span>
+                <span class="score-ring__label" id="scoreLabel">Calculating…</span>
               </div>
             </div>
           </div>
           <div class="results__breakdown">
             <h4>Breakdown by category</h4>
-            <div class="breakdown-bars" id="breakdownBars" role="list"></div>
+            <div class="breakdown-bars" id="breakdownBars" role="list" aria-label="Emissions by category"></div>
           </div>
         </div>
-        <div class="results__comparison">
-          <div class="compare-card">
-            <div class="compare-card__icon">🌍</div>
+        <div class="results__comparison" role="list" aria-label="Comparison with benchmarks">
+          <div class="compare-card" role="listitem">
+            <div class="compare-card__icon" aria-hidden="true">🌍</div>
             <div class="compare-card__text">
               <strong>Global average</strong>
               <span>4.7 t CO₂/yr</span>
             </div>
-            <div class="compare-card__diff" id="globalDiff"></div>
+            <div class="compare-card__diff" id="globalDiff" aria-live="polite"></div>
           </div>
-          <div class="compare-card">
-            <div class="compare-card__icon">🎯</div>
+          <div class="compare-card" role="listitem">
+            <div class="compare-card__icon" aria-hidden="true">🎯</div>
             <div class="compare-card__text">
               <strong>Paris target</strong>
               <span>2.0 t CO₂/yr</span>
             </div>
-            <div class="compare-card__diff" id="parisDiff"></div>
+            <div class="compare-card__diff" id="parisDiff" aria-live="polite"></div>
           </div>
         </div>
-        <!-- Trend badge (shown if user has prior results) -->
         <div id="trendBadge" class="trend-badge" hidden aria-live="polite"></div>
-
-        <!-- Top 3 personalised tips injected by ResultsRenderer -->
         <div id="resultsTopTips" class="results__top-tips" aria-label="Your top recommended actions"></div>
-
-        <button class="btn btn--primary" style="margin-top:2rem" onclick="document.getElementById('tips').scrollIntoView({behavior:'smooth'})">
-          See all reduction tips →
-        </button>
-        <button class="btn btn--ghost" style="margin-top:1rem" onclick="resetCalc()">
-          Recalculate
-        </button>
+        <div class="results__actions">
+          <button class="btn btn--primary" type="button" data-scroll-to="tips">See all reduction tips →</button>
+          <button class="btn btn--ghost" type="button" id="recalcBtn">Recalculate</button>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- INSIGHTS STRIP -->
-  <section class="insights" id="insights" aria-labelledby="insights-heading">
+  <!-- INSIGHTS -->
+  <section class="insights section--lazy" id="insights" aria-labelledby="insights-heading">
     <div class="container">
       <h2 id="insights-heading" class="sr-only">Key Insights</h2>
       <div class="insights__grid">
@@ -356,66 +317,59 @@
   </section>
 
   <!-- TIPS -->
-  <section class="section tips" id="tips" aria-labelledby="tips-heading">
+  <section class="section tips section--lazy" id="tips" aria-labelledby="tips-heading">
     <div class="container">
       <div class="section__header">
-        <div class="section__eyebrow">Personalised actions</div>
+        <div class="section__eyebrow">Evidence-based actions</div>
         <h2 id="tips-heading">Ways to Reduce Your Impact</h2>
-        <p>Ranked by impact. Filter to what fits your lifestyle.</p>
+        <p>Sorted by CO₂ saving. Filter to what fits your lifestyle.</p>
       </div>
-      <div class="tips__filters" role="group" aria-label="Filter tips">
-        <button class="filter-btn active" onclick="filterTips('all', this)" aria-pressed="true">All</button>
-        <button class="filter-btn" onclick="filterTips('home', this)" aria-pressed="false">Home</button>
-        <button class="filter-btn" onclick="filterTips('travel', this)" aria-pressed="false">Travel</button>
-        <button class="filter-btn" onclick="filterTips('food', this)" aria-pressed="false">Food</button>
-        <button class="filter-btn" onclick="filterTips('shopping', this)" aria-pressed="false">Shopping</button>
+      <div class="tips__filters" role="group" aria-label="Filter tips by category">
+        <button class="filter-btn active" type="button" data-filter="all" aria-pressed="true">All</button>
+        <button class="filter-btn" type="button" data-filter="home" aria-pressed="false">Home</button>
+        <button class="filter-btn" type="button" data-filter="travel" aria-pressed="false">Travel</button>
+        <button class="filter-btn" type="button" data-filter="food" aria-pressed="false">Food</button>
+        <button class="filter-btn" type="button" data-filter="shopping" aria-pressed="false">Shopping</button>
       </div>
-      <div class="tips__grid" id="tipsGrid" role="list"></div>
+      <div class="tips__grid" id="tipsGrid" role="list" aria-label="Reduction tips"></div>
     </div>
   </section>
 
   <!-- AI ASSISTANT -->
-  <section class="section assistant" id="assistant" aria-labelledby="assistant-heading">
+  <section class="section assistant section--lazy" id="assistant" aria-labelledby="assistant-heading">
     <div class="container">
       <div class="section__header">
-        <div class="section__eyebrow">AI-powered</div>
+        <div class="section__eyebrow">AI-powered guidance</div>
         <h2 id="assistant-heading">Carbon Footprint Assistant</h2>
         <p>Ask anything about your footprint, reduction strategies, or climate science.</p>
       </div>
 
-      <div class="chat" role="main" aria-label="AI Assistant chat">
-        <div class="chat__messages" id="chatMessages" aria-live="polite" aria-label="Conversation">
+      <div class="chat" role="region" aria-label="AI Assistant conversation">
+        <div class="chat__messages" id="chatMessages" aria-live="polite" aria-relevant="additions" aria-label="Conversation history">
           <div class="chat__message chat__message--assistant">
             <div class="chat__avatar" aria-hidden="true">◈</div>
             <div class="chat__bubble">
               <p>Hi! I'm your carbon footprint assistant. I can help you understand your environmental impact, suggest personalised reductions, answer questions about climate science, or explain your calculator results.</p>
               <p>What would you like to explore?</p>
-              <div class="chat__suggestions">
-                <button class="suggestion-btn" onclick="sendSuggestion(this)">What's the easiest change I can make?</button>
-                <button class="suggestion-btn" onclick="sendSuggestion(this)">How does my diet affect emissions?</button>
-                <button class="suggestion-btn" onclick="sendSuggestion(this)">Explain the Paris Agreement target</button>
-                <button class="suggestion-btn" onclick="sendSuggestion(this)">Is an EV really better for the planet?</button>
+              <div class="chat__suggestions" role="group" aria-label="Suggested questions">
+                <button class="suggestion-btn" type="button" data-suggestion="What's the easiest change I can make?">What's the easiest change I can make?</button>
+                <button class="suggestion-btn" type="button" data-suggestion="How does my diet affect emissions?">How does my diet affect emissions?</button>
+                <button class="suggestion-btn" type="button" data-suggestion="Explain the Paris Agreement target">Explain the Paris Agreement target</button>
+                <button class="suggestion-btn" type="button" data-suggestion="Is an EV really better for the planet?">Is an EV really better for the planet?</button>
               </div>
             </div>
           </div>
         </div>
-
         <div class="chat__input-area">
           <div class="chat__input-wrap">
-            <textarea 
-              id="chatInput" 
-              class="chat__input" 
-              placeholder="Ask about your carbon footprint…" 
-              rows="1"
-              aria-label="Message input"
-              aria-multiline="true"
-              onkeydown="handleChatKeydown(event)"
-            ></textarea>
-            <button class="chat__send" id="chatSendBtn" onclick="sendMessage()" aria-label="Send message">
+            <label for="chatInput" class="sr-only">Message the carbon assistant</label>
+            <textarea id="chatInput" class="chat__input" placeholder="Ask about your carbon footprint…"
+              rows="1" aria-multiline="true" aria-label="Message input"></textarea>
+            <button class="chat__send" id="chatSendBtn" type="button" aria-label="Send message">
               <span aria-hidden="true">↑</span>
             </button>
           </div>
-          <p class="chat__disclaimer">Responses generated by AI. Always verify important decisions with qualified experts.</p>
+          <p class="chat__disclaimer" role="note">Responses generated by AI. Always verify important decisions with qualified experts.</p>
         </div>
       </div>
     </div>
@@ -439,29 +393,5 @@
   </footer>
 
   <script src="src/app.js"></script>
-  <script>
-    // Register Service Worker for offline support and faster repeat loads
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(() => {/* SW unavailable on file:// */});
-      });
-    }
-
-    // Lazy-load off-screen sections using IntersectionObserver
-    if ('IntersectionObserver' in window) {
-      const lazyObserver = new IntersectionObserver((entries) => {
-        entries.forEach(({ isIntersecting, target }) => {
-          if (isIntersecting) {
-            target.classList.add('section--visible');
-            lazyObserver.unobserve(target);
-          }
-        });
-      }, { rootMargin: '100px' });
-      document.querySelectorAll('.section, .insights, .tips, .assistant').forEach(el => {
-        el.classList.add('section--lazy');
-        lazyObserver.observe(el);
-      });
-    }
-  </script>
 </body>
 </html>
